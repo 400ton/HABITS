@@ -6,7 +6,7 @@ from users.serializers import UserSerializer
 
 
 class UserList(generics.ListAPIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAdminUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
