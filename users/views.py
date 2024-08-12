@@ -1,25 +1,29 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAdminUser, AllowAny
 
 from users.models import User
+from users.paginators import UserPagination
+from users.permissions import IsOwner
 from users.serializers import UserSerializer
 
 
 class UserList(generics.ListAPIView):
-    permission_classes = [IsAdminUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    pagination_class = UserPagination
+    permission_classes = [IsAdminUser]
 
 
 class UserUpdate(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsOwner]
 
 
 class UserCreate(generics.CreateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         user = serializer.save(is_active=True)
@@ -28,5 +32,5 @@ class UserCreate(generics.CreateAPIView):
 
 
 class UserDelete(generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsOwner, IsAdminUser]
     queryset = User.objects.all()
