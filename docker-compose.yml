@@ -25,6 +25,21 @@ services:
      timeout: 5s
      retries: 5
 
+  django:
+    build: .
+    tty: true
+    env_file:
+      - .env
+    container_name: django
+    command: sh -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
   app:
     build: .
     tty: true
